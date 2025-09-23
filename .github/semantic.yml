@@ -1,0 +1,19 @@
+# Require both PR title and all commits to follow semantic rules
+titleAndCommits: true
+
+# Allowed semantic types (from Conventional Commits)
+types:
+  - feat      #  A new feature
+  - fix       #  A bug fix
+  - docs      #  Documentation changes only
+  - style     #  Code style/formatting (no logic changes)
+  - refactor  # ️ Code restructuring (no behavior change)
+  - perf      #  Performance improvements
+  - test      #  Adding or updating tests
+  - build     #  Build system or dependencies
+  - ci        #  CI/CD configuration changes
+  - chore     #  Maintenance tasks (no app logic changes)
+  - revert    #  Revert a previous commit
+  - config    #  Configuration files changes
+  - init      #  Initial commit or project setup
+  - structure  #  Changes to project structure or architecture
