@@ -1,0 +1,8 @@
+{
+  "name": "Hidden Key Cookie",
+  "difficulty": "hard",
+  "category": "web",
+  "points": 400,
+  "author": "Shane Samuel PRADEEP",
+  "description": "Find secret key hidden in image metadata and forge a session cookie for admin to retrieve the flag."
+}
