@@ -5,24 +5,24 @@ import pydantic
 from app.backend.models.schema.base import BaseSchemaModel
 
 
-class AccountInCreate(BaseSchemaModel):
+class UserInCreate(BaseSchemaModel):
     username: str
     email: pydantic.EmailStr
     password: str
 
 
-class AccountInUpdate(BaseSchemaModel):
+class UserInUpdate(BaseSchemaModel):
     username: str | None
     email: str | None
     password: str | None
 
 
-class AccountInLogin(BaseSchemaModel):
+class UserInLogin(BaseSchemaModel):
     email: pydantic.EmailStr
     password: str
 
 
-class AccountWithToken(BaseSchemaModel):
+class UserLoggedInWithToken(BaseSchemaModel):
     token: str
     username: str
     email: pydantic.EmailStr
@@ -33,6 +33,6 @@ class AccountWithToken(BaseSchemaModel):
     updated_at: datetime.datetime | None
 
 
-class AccountInResponse(BaseSchemaModel):
+class UserInResponse(BaseSchemaModel):
     id: int
-    authorized_account: AccountWithToken
+    authorized_account: UserLoggedInWithToken
