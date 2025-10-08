@@ -1,4 +1,9 @@
-﻿# Capture The Flag (CTF) Project
+[![React Version](https://img.shields.io/badge/react-18.2.0-61dafb.svg?logo=react&logoColor=white)](https://reactjs.org/)
+[![Python Version](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+ 
+ # Capture The Flag (CTF) Project
 
 ## 📌 Project Overview
 This project aims to design and implement a **Capture The Flag (CTF)** scenario suitable for a cybersecurity competition.  
@@ -25,5 +30,6 @@ The scenario will consist of **six original challenges** across multiple categor
 ## For details on how to contribute see the contributing guide: 
 /.github/CONTRIBUTING.md\
 https://github.com/kubosis/ISEP_CyberSec/tree/devel?tab=contributing-ov-file
+
 
 
