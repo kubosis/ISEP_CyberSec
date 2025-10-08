@@ -8,7 +8,7 @@ WORKDIR /opt/challenge
 
 COPY . /opt/challenge/
 
-# Másoljuk közvetlenül az Nginx webrootba
+# Copy it directly into the Nginx web root so that it can be accessed from the root in the browser.
 RUN cp -r /opt/challenge/* /var/www/html/
 
 CMD ["nginx", "-g", "daemon off;"]
