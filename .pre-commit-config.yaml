@@ -19,5 +19,4 @@ repos:
       - id: conventional-pre-commit
         name: semantic commit message check
         stages: [commit-msg]
-        args:
-          - --config=semantic.yml
+        args: [feat, fix, docs, style, refactor, test, chore, ci, build]
