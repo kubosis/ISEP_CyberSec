@@ -1,17 +1,14 @@
 import logging
 from pathlib import Path
-import json
-import yaml
-
 import decouple
 import pydantic_settings
 from charset_normalizer.md import lru_cache
 
-ROOT_DIR: Path = Path(__file__).parent.parent.resolve()
-
 backend_settings = None
 
 class BackendBaseSettings(pydantic_settings.BaseSettings):
+    ROOT_DIR: Path = Path(__file__).parent.parent.resolve()
+
     TITLE: str = "ISEP CTF BACKEND"
     VERSION: str = "0.0.1"
     TIMEZONE: str = "CET"
@@ -19,22 +16,35 @@ class BackendBaseSettings(pydantic_settings.BaseSettings):
     ENV: str = decouple.config("ENV", default="dev", cast=str)  # type: ignore
     DEBUG: bool = ENV == "dev"
 
+    SQLALCHEMY_DATABASE_URL: str = decouple.config("SQLALCHEMY_DATABASE_URL", cast=str)
 
     # Server settings
     SERVER_HOST: str = decouple.config("SERVER_HOST", cast=str)  # type: ignore
     SERVER_PORT: int = decouple.config("SERVER_PORT", cast=int)  # type: ignore
 
+    # CORS middleware settings
     ALLOWED_ORIGINS: list[str] = [
         "http://localhost:3000", # reactJS
         "http://0.0.0.0:3000",
     ]
-
     ALLOWED_METHODS: list[str] = ["*"]
     ALLOWED_HEADERS: list[str] = ["*"]
 
     LOGGING_LEVEL: int = logging.INFO
     LOGGERS: tuple[str, str] = ("uvicorn.asgi", "uvicorn.access")
 
+    # FastAPI settings
+    API_VERSION: str = "v1"
+    API_PREFIX: str = f"/api/{API_VERSION}"
+    DOCS_URL: str = "/docs"
+    OPENAPI_URL: str = "/openapi.json"
+    REDOC_URL: str = "/redoc"
+    OPENAPI_PREFIX: str = ""
+
+    HASHING_ALGORITHM_LAYER_1: str = decouple.config("HASHING_ALGORITHM_LAYER_1", cast=str)  # type: ignore
+    HASHING_ALGORITHM_LAYER_2: str = decouple.config("HASHING_ALGORITHM_LAYER_2", cast=str)  # type: ignore
+    HASHING_SALT: str = decouple.config("HASHING_SALT", cast=str)  # type: ignore
+    JWT_ALGORITHM: str = decouple.config("JWT_ALGORITHM", cast=str)  # type: ignore
 
     @property
     def backend_app_attributes(self) -> dict[str, str | bool | None]:
@@ -46,6 +56,11 @@ class BackendBaseSettings(pydantic_settings.BaseSettings):
             "version": self.VERSION,
             "debug": self.DEBUG,
             "description": self.DESCRIPTION,
+            "docs_url": self.DOCS_URL,
+            "openapi_url": self.OPENAPI_URL,
+            "redoc_url": self.REDOC_URL,
+            "openapi_prefix": self.OPENAPI_PREFIX,
+            "api_prefix": self.API_PREFIX,
         }
 
 
