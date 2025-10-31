@@ -1,7 +1,8 @@
-import hmac
 import hashlib
+import hmac
 
 from passlib.context import CryptContext
+
 from app.backend.config.settings import get_settings
 
 settings = get_settings()
@@ -19,21 +20,14 @@ class PasswordManager:
     """
 
     def __init__(self):
-        self._hash_ctx = CryptContext(
-            schemes=["argon2"],
-            deprecated="auto"
-        )
+        self._hash_ctx = CryptContext(schemes=["argon2"], deprecated="auto")
         self._pepper = settings.HASHING_PEPPER
 
     def _apply_pepper(self, raw_password: str) -> str:
         """Apply HMAC-based pepper to password before hashing if `HASHING_PEPPER` env was set"""
         if not self._pepper:
             return raw_password
-        return hmac.new(
-            self._pepper.encode(),
-            raw_password.encode(),
-            hashlib.sha256
-        ).hexdigest()
+        return hmac.new(self._pepper.encode(), raw_password.encode(), hashlib.sha256).hexdigest()
 
     def hash_password(self, raw_password: str) -> str:
         peppered = self._apply_pepper(raw_password)

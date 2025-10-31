@@ -1,9 +1,9 @@
 import typing
 
 import sqlalchemy
-from sqlalchemy.sql import functions as sqlalchemy_functions
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.exc import IntegrityError, SQLAlchemyError
+from sqlalchemy.sql import functions as sqlalchemy_functions
 
 from app.backend.models.db.users import UserAccount
 from app.backend.models.schema.users import UserInCreate, UserInLogin, UserInUpdate
@@ -12,7 +12,7 @@ from app.backend.security.password import PasswordManager
 from app.backend.utils.exceptions import DBEntityAlreadyExists, DBEntityDoesNotExist, PasswordDoesNotMatch
 
 
-class AccountCRUDRepository(BaseCRUDRepository):
+class UserCRUDRepository(BaseCRUDRepository):
     def __init__(self, async_session: AsyncSession, pwd_manager: PasswordManager):
         super().__init__(async_session)
         self._pwd_manager = pwd_manager
@@ -21,9 +21,7 @@ class AccountCRUDRepository(BaseCRUDRepository):
         try:
             hashed_pwd = self._pwd_manager.hash_password(account_create.password)
             new_account = UserAccount(
-                username=account_create.username,
-                email=account_create.email,
-                hashed_password=hashed_pwd
+                username=account_create.username, email=account_create.email, hashed_password=hashed_pwd
             )
 
             self.async_session.add(instance=new_account)
@@ -71,7 +69,6 @@ class AccountCRUDRepository(BaseCRUDRepository):
         return result
 
     async def read_user_by_password_authentication(self, account_login: UserInLogin) -> UserAccount:
-        # FIXED: Use UserAccount.email instead of UserInLogin.email
         stmt = sqlalchemy.select(UserAccount).where(UserAccount.email == account_login.email)
         query = await self.async_session.execute(statement=stmt)
         db_account = query.scalar()
@@ -102,7 +99,6 @@ class AccountCRUDRepository(BaseCRUDRepository):
                 .values(updated_at=sqlalchemy_functions.now())
             )
 
-            # FIXED: Check key existence, not truthiness
             if "username" in new_account_data:
                 update_stmt = update_stmt.values(username=new_account_data["username"])
 
@@ -140,9 +136,7 @@ class AccountCRUDRepository(BaseCRUDRepository):
 
     async def is_username_taken(self, username: str) -> bool:
         """Returns True if username is taken, False if available."""
-        username_stmt = sqlalchemy.select(UserAccount.username).where(
-            UserAccount.username == username
-        )
+        username_stmt = sqlalchemy.select(UserAccount.username).where(UserAccount.username == username)
         username_query = await self.async_session.execute(username_stmt)
         db_username = username_query.scalar()
 
@@ -150,9 +144,7 @@ class AccountCRUDRepository(BaseCRUDRepository):
 
     async def is_email_taken(self, email: str) -> bool:
         """Returns True if email is taken, False if available."""
-        email_stmt = sqlalchemy.select(UserAccount.email).where(
-            UserAccount.email == email
-        )
+        email_stmt = sqlalchemy.select(UserAccount.email).where(UserAccount.email == email)
         email_query = await self.async_session.execute(email_stmt)
         db_email = email_query.scalar()
 

@@ -1,31 +1,30 @@
 import fastapi
-from fastapi.middleware import cors
 import uvicorn
+from fastapi.middleware import cors
 
 from app.backend.api.v1.router import api_router
-from app.backend.config.settings import get_settings, BackendBaseSettings
-
+from app.backend.config.settings import BackendBaseSettings, get_settings
 
 
 def _create_fastapi_backend(app_settings: BackendBaseSettings) -> fastapi.FastAPI:
     backend_app = fastapi.FastAPI(**app_settings.backend_app_attributes)
 
     backend_app.add_middleware(
-        cors.CORSMiddleware, # type: ignore
+        cors.CORSMiddleware,  # type: ignore
         allow_origins=app_settings.ALLOWED_ORIGINS,
-        allow_credentials=app_settings.IS_ALLOWED_CREDENTIALS,
+        allow_credentials=False,  # We will send  "Authorization": `Bearer ${accessToken}` in headers manually
         allow_methods=app_settings.ALLOWED_METHODS,
         allow_headers=app_settings.ALLOWED_HEADERS,
     )
 
-    backend_app.include_router(api_router, prefix=app_settings.API_PREFIX)
+    backend_app.include_router(api_router)
     return backend_app
 
-if __name__ == '__main__':
-    settings = get_settings()
-    app = _create_fastapi_backend(settings)
 
-    # bind to asgi
+settings = get_settings()
+app = _create_fastapi_backend(settings)
+
+if __name__ == "__main__":
     uvicorn.run(
         "main:app",
         host=settings.SERVER_HOST,
@@ -34,4 +33,3 @@ if __name__ == '__main__':
         workers=settings.SERVER_WORKERS,
         log_level=settings.LOGGING_LEVEL,
     )
-

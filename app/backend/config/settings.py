@@ -1,10 +1,12 @@
 import logging
 from pathlib import Path
+
 import decouple
 import pydantic_settings
 from charset_normalizer.md import lru_cache
 
 backend_settings = None
+
 
 class BackendBaseSettings(pydantic_settings.BaseSettings):
     ROOT_DIR: Path = Path(__file__).parent.parent.resolve()
@@ -24,7 +26,7 @@ class BackendBaseSettings(pydantic_settings.BaseSettings):
 
     # CORS middleware settings
     ALLOWED_ORIGINS: list[str] = [
-        "http://localhost:3000", # reactJS
+        "http://localhost:3000",  # reactJS
         "http://0.0.0.0:3000",
     ]
     ALLOWED_METHODS: list[str] = ["*"]
@@ -32,19 +34,21 @@ class BackendBaseSettings(pydantic_settings.BaseSettings):
 
     LOGGING_LEVEL: int = logging.INFO
     LOGGERS: tuple[str, str] = ("uvicorn.asgi", "uvicorn.access")
+    SERVER_WORKERS: int = decouple.config("SERVER_WORKERS", cast=int)  # type: ignore
 
     # FastAPI settings
     API_VERSION: str = "v1"
-    API_PREFIX: str = f"/api/{API_VERSION}"
+    API_PREFIX: str = f"api/{API_VERSION}"
     DOCS_URL: str = "/docs"
     OPENAPI_URL: str = "/openapi.json"
     REDOC_URL: str = "/redoc"
     OPENAPI_PREFIX: str = ""
 
-    HASHING_ALGORITHM_LAYER_1: str = decouple.config("HASHING_ALGORITHM_LAYER_1", cast=str)  # type: ignore
-    HASHING_ALGORITHM_LAYER_2: str = decouple.config("HASHING_ALGORITHM_LAYER_2", cast=str)  # type: ignore
-    HASHING_SALT: str = decouple.config("HASHING_SALT", cast=str)  # type: ignore
     JWT_ALGORITHM: str = decouple.config("JWT_ALGORITHM", cast=str)  # type: ignore
+    SECRET_KEY: str = decouple.config("SECRET_KEY", cast=str)  # type: ignore
+    HASHING_PEPPER: str = decouple.config("HASHING_PEPPER", cast=str)  # type: ignore
+
+    API_V1_STR: str = API_PREFIX
 
     @property
     def backend_app_attributes(self) -> dict[str, str | bool | None]:
